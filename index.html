@@ -21,7 +21,6 @@ header {
   top: 0;
   background: rgba(11,18,32,0.85);
   backdrop-filter: blur(10px);
-  z-index: 10;
 }
 
 header h1 {
@@ -77,13 +76,19 @@ p {
   color: #cbd5e1;
 }
 
-/* BADGES */
+/* BADGES CONTAINER */
+.badges {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* BADGE */
 .badge {
-  display: inline-block;
   padding: 6px 12px;
   border-radius: 999px;
   font-size: 13px;
-  margin-top: 10px;
 }
 
 /* COLORS */
@@ -91,30 +96,29 @@ p {
 .red { background: #450a0a; color: #ff4d4d; }
 .gray { background: #1f2937; color: #9ca3af; }
 .purple { background: #2e1065; color: #c084fc; }
+.yellow { background: #3f2f00; color: #facc15; }
 
-/* STATUS */
+/* STATUS BORDER */
 .free { border-color: #22c55e; }
 .full { border-color: #ef4444; }
-.private { border-color: #9ca3af; opacity: 0.75; }
+.private { border-color: #9ca3af; opacity: 0.8; }
 .postponed { border-color: #a855f7; }
 
-/* ❌ CANCELLED CARD (MEHR FARBE) */
+/* ❌ CANCELLED */
 .cancelled {
   border-color: #ff2d2d;
   background: linear-gradient(135deg, rgba(255,0,0,0.12), rgba(255,0,0,0.04));
-  opacity: 0.75;
   box-shadow: 0 0 18px rgba(255,0,0,0.25);
-  position: relative;
 }
 
-/* 🔴 ROTER DURCHSTRICH */
+/* 🔴 Durchstrich */
 .cancelled .title {
   text-decoration: line-through;
   text-decoration-color: #ff2d2d;
   text-decoration-thickness: 2px;
 }
 
-/* 🔴 ABGESAGT BADGE (SANFT BLINKEND) */
+/* 🔴 Badge */
 .cancelled-badge {
   position: absolute;
   top: 12px;
@@ -125,15 +129,11 @@ p {
   padding: 5px 10px;
   border-radius: 999px;
   font-weight: bold;
-
   animation: softBlink 2.8s infinite;
 }
 
-/* SANFTES BLINKEN */
 @keyframes softBlink {
-  0%   { opacity: 1; transform: scale(1); }
-  50%  { opacity: 0.45; transform: scale(1.05); }
-  100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; }
 }
 </style>
 </head>
@@ -153,27 +153,27 @@ const events = [
   {
     title: "🎬📸 Murgtalbahn Fotos/Videos",
     date: "28.03.2026",
-    status: "free",
+    status: ["free"],
     details: "Wir laufen durch das Murgtal und fotografieren die Züge.\nStart ca. 9–10 Uhr am Hbf."
   },
   {
     title: "🚶‍♂️ Teckbahn Tour",
     date: "29.03.2026",
-    status: "private",
+    status: ["private"],
     details: "Nur für bestimmte Personen"
   },
   {
     title: "🚈 Bahntag Karlsruhe",
     date: "03.04.2026",
-    status: "full",
-    details: "Wir fahren Bahn - RegioTram - Tram in und um Karlsruhe"
+    status: ["full"],
+    details: "Wir fahren Bahn - RegioTram - Tram"
   },
   {
     title: "🏙️ Stuttgart",
     date: "05.04.2026",
-    status: "private",
+    status: ["planned", "private"], // ✅ GEPLANT + PRIVAT
     details: "Nur für bestimmte Personen"
-  },
+  }
 ];
 
 const app = document.getElementById("app");
@@ -181,50 +181,52 @@ const app = document.getElementById("app");
 events.forEach(e => {
 
   const card = document.createElement("div");
-  card.classList.add("card", e.status);
+  card.classList.add("card");
 
-  let badgeText = "";
-  let badgeClass = "";
+  let badgesHTML = "";
 
-    if (e.status === "planed") {
-    badgeText = "🟡 geplant";
-    badgeClass = "yellow";
-  }
-  
-  if (e.status === "free") {
-    badgeText = "🟢 Teilnahme möglich";
-    badgeClass = "green";
-  }
+  e.status.forEach(s => {
 
-  if (e.status === "full") {
-    badgeText = "🔴 Keine Teilnahme (mehr) möglich";
-    badgeClass = "red";
-  }
+    if (s === "planned") {
+      badgesHTML += `<span class="badge yellow">🟡 Geplant</span>`;
+    }
 
-  if (e.status === "private") {
-    badgeText = "🔒 Privat";
-    badgeClass = "gray";
-  }
+    if (s === "free") {
+      badgesHTML += `<span class="badge green">🟢 Teilnahme möglich</span>`;
+      card.classList.add("free");
+    }
 
-  if (e.status === "postponed") {
-    badgeText = "🟣 Verschoben";
-    badgeClass = "purple";
-  }
+    if (s === "full") {
+      badgesHTML += `<span class="badge red">🔴 Keine Teilnahme möglich</span>`;
+      card.classList.add("full");
+    }
 
-  if (e.status === "cancelled") {
-    badgeText = "❌ Fällt aus";
-    badgeClass = "red";
-  }
+    if (s === "private") {
+      badgesHTML += `<span class="badge gray">🔒 Privat</span>`;
+      card.classList.add("private");
+    }
+
+    if (s === "postponed") {
+      badgesHTML += `<span class="badge purple">🟣 Verschoben</span>`;
+      card.classList.add("postponed");
+    }
+
+    if (s === "cancelled") {
+      badgesHTML += `<span class="badge red">❌ Fällt aus</span>`;
+      card.classList.add("cancelled");
+    }
+
+  });
 
   card.innerHTML = `
     <div class="title">${e.title}</div>
     <div>📅 ${e.date}</div>
 
-    ${e.status === "cancelled" ? `<div class="cancelled-badge">ABGESAGT</div>` : ""}
+    ${e.status.includes("cancelled") ? `<div class="cancelled-badge">ABGESAGT</div>` : ""}
 
-    <span class="badge ${badgeClass}">
-      ${badgeText}
-    </span>
+    <div class="badges">
+      ${badgesHTML}
+    </div>
 
     <details>
       <summary>Details anzeigen</summary>
