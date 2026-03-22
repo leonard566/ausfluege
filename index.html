@@ -171,7 +171,7 @@ const events = [
   {
     title: "🏙️ Stuttgart",
     date: "05.04.2026",
-    status: "private",
+    status: "private""planed",
     details: "Nur für bestimmte Personen"
   },
 ];
@@ -186,6 +186,11 @@ events.forEach(e => {
   let badgeText = "";
   let badgeClass = "";
 
+    if (e.status === "planed") {
+    badgeText = "🟡 geplant
+    badgeClass = "yellow";
+  }
+  
   if (e.status === "free") {
     badgeText = "🟢 Teilnahme möglich";
     badgeClass = "green";
