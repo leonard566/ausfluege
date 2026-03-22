@@ -163,6 +163,12 @@ const events = [
     details: "Nur für bestimmte Personen"
   },
   {
+    title: "🚈 Bahntag Karlsruhe",
+    date: "03.04.2026",
+    status: "full",
+    details: "Wir fahren Bahn - RegioTram - Tram in und um Karlsruhe"
+  },
+  {
     title: "🏙️ Stuttgart",
     date: "05.04.2026",
     status: "private",
@@ -186,7 +192,7 @@ events.forEach(e => {
   }
 
   if (e.status === "full") {
-    badgeText = "🔴 Ausgebucht";
+    badgeText = "🔴 Keine Teilnahme (mehr) möglich";
     badgeClass = "red";
   }
 
