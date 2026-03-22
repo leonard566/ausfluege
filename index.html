@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Meine Ausflüge</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .event {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+
+    button {
+      padding: 10px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>📅 Meine Ausflüge</h1>
+
+<div class="event">
+  <h2 id="title"></h2>
+  <p id="date"></p>
+  <p id="status"></p>
+
+  <details>
+    <summary>Details anzeigen</summary>
+    <p>Treffpunkt: Bahnhof</p>
+    <p>Dauer: 4 Stunden</p>
+  </details>
+
+  <button id="joinBtn">Ich komme mit</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "DEIN-KEY",
+  authDomain: "DEIN-DOMAIN",
+  projectId: "DEIN-PROJECT-ID",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const titleEl = document.getElementById("title");
+const dateEl = document.getElementById("date");
+const statusEl = document.getElementById("status");
+const btn = document.getElementById("joinBtn");
+
+async function loadEvent() {
+  const ref = doc(db, "events", "event1");
+  const snap = await getDoc(ref);
+  const data = snap.data();
+
+  titleEl.innerText = data.title;
+  dateEl.innerText = "📅 " + data.date;
+
+  const count = data.participants.length;
+
+  if (data.private) {
+    statusEl.innerText = "🔒 Privat";
+    btn.style.display = "none";
+    return;
+  }
+
+  if (count >= data.max) {
+    statusEl.innerText = "🚫 Ausgebucht";
+    btn.style.display = "none";
+    return;
+  }
+
+  statusEl.innerText = `👥 ${count} / ${data.max} Plätze`;
+}
+
+btn.onclick = async () => {
+  const name = prompt("Dein Name:");
+  if (!name) return;
+
+  const ref = doc(db, "events", "event1");
+  const snap = await getDoc(ref);
+  const data = snap.data();
+
+  if (data.participants.length >= data.max) {
+    alert("Event ist voll!");
+    return;
+  }
+
+  await updateDoc(ref, {
+    participants: [...data.participants, name]
+  });
+
+  alert("Du bist dabei!");
+  location.reload();
+};
+
+loadEvent();
+</script>
+
+</body>
+</html>
