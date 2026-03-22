@@ -1,114 +1,165 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Meine Ausflüge</title>
+<meta charset="UTF-8">
+<title>Meine Ausflüge</title>
 
-  <style>
-    body {
-      font-family: Arial;
-      max-width: 600px;
-      margin: auto;
-    }
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  max-width: 700px;
+  margin: auto;
+}
 
-    .event {
-      border: 1px solid #ccc;
-      padding: 15px;
-      margin-top: 20px;
-      border-radius: 10px;
-    }
+h1 {
+  text-align: center;
+}
 
-    button {
-      padding: 10px;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-  </style>
+.event {
+  background: white;
+  border: 3px solid green;
+  border-radius: 12px;
+  padding: 15px;
+  margin: 20px 0;
+  transition: 0.3s;
+}
+
+.event.full {
+  border-color: red;
+  opacity: 0.7;
+}
+
+.event.private {
+  border-color: gray;
+  opacity: 0.6;
+}
+
+button {
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button.join {
+  background: green;
+  color: white;
+}
+
+button.disabled {
+  background: gray;
+  cursor: not-allowed;
+}
+
+.status {
+  font-weight: bold;
+}
+
+</style>
 </head>
 
 <body>
 
 <h1>📅 Meine Ausflüge</h1>
 
-<div class="event">
-  <h2 id="title"></h2>
-  <p id="date"></p>
-  <p id="status"></p>
+<div id="events"></div>
 
-  <details>
-    <summary>Details anzeigen</summary>
-    <p>Treffpunkt: Bahnhof</p>
-    <p>Dauer: 4 Stunden</p>
-  </details>
+<script>
 
-  <button id="joinBtn">Ich komme mit</button>
-</div>
+// 🔧 HIER DEINE EVENTS DEFINIEREN
+const events = [
+  {
+    title: "Wanderung Schwarzwald",
+    date: "12. April 2026",
+    max: 5,
+    participants: 2,
+    private: false,
+    details: "Treffpunkt Bahnhof, Dauer 4h"
+  },
+  {
+    title: "Kinoabend",
+    date: "20. April 2026",
+    max: 3,
+    participants: 3,
+    private: false,
+    details: "Film: Actionfilm 🍿"
+  },
+  {
+    title: "Grillabend",
+    date: "25. April 2026",
+    max: 10,
+    participants: 0,
+    private: true,
+    details: "Nur für Freunde"
+  }
+];
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+// 🎨 Anzeige
+const container = document.getElementById("events");
 
-const firebaseConfig = {
-  apiKey: "DEIN-KEY",
-  authDomain: "DEIN-DOMAIN",
-  projectId: "DEIN-PROJECT-ID",
-};
+events.forEach(event => {
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+  const div = document.createElement("div");
+  div.classList.add("event");
 
-const titleEl = document.getElementById("title");
-const dateEl = document.getElementById("date");
-const statusEl = document.getElementById("status");
-const btn = document.getElementById("joinBtn");
-
-async function loadEvent() {
-  const ref = doc(db, "events", "event1");
-  const snap = await getDoc(ref);
-  const data = snap.data();
-
-  titleEl.innerText = data.title;
-  dateEl.innerText = "📅 " + data.date;
-
-  const count = data.participants.length;
-
-  if (data.private) {
-    statusEl.innerText = "🔒 Privat";
-    btn.style.display = "none";
-    return;
+  // 🔒 Privat
+  if (event.private) {
+    div.classList.add("private");
   }
 
-  if (count >= data.max) {
-    statusEl.innerText = "🚫 Ausgebucht";
-    btn.style.display = "none";
-    return;
+  // 🚫 Voll
+  if (event.participants >= event.max) {
+    div.classList.add("full");
   }
 
-  statusEl.innerText = `👥 ${count} / ${data.max} Plätze`;
-}
+  // Status Text
+  let statusText = "";
 
-btn.onclick = async () => {
-  const name = prompt("Dein Name:");
-  if (!name) return;
-
-  const ref = doc(db, "events", "event1");
-  const snap = await getDoc(ref);
-  const data = snap.data();
-
-  if (data.participants.length >= data.max) {
-    alert("Event ist voll!");
-    return;
+  if (event.private) {
+    statusText = "🔒 Privat";
+  } else if (event.participants >= event.max) {
+    statusText = "🚫 Ausgebucht";
+  } else {
+    statusText = `👥 ${event.participants} / ${event.max} Plätze frei`;
   }
 
-  await updateDoc(ref, {
-    participants: [...data.participants, name]
-  });
+  div.innerHTML = `
+    <h2>${event.title}</h2>
+    <p>📅 ${event.date}</p>
+    <p class="status">${statusText}</p>
 
-  alert("Du bist dabei!");
-  location.reload();
-};
+    <details>
+      <summary>Details anzeigen</summary>
+      <p>${event.details}</p>
+    </details>
+  `;
 
-loadEvent();
+  // Button nur wenn möglich
+  if (!event.private && event.participants < event.max) {
+    const btn = document.createElement("button");
+    btn.classList.add("join");
+    btn.innerText = "Ich komme mit";
+
+    btn.onclick = () => {
+      const name = prompt("Dein Name:");
+      if (name) {
+        alert("Danke " + name + "! (Nur Demo – wird nicht gespeichert)");
+      }
+    };
+
+    div.appendChild(btn);
+  } else {
+    const btn = document.createElement("button");
+    btn.classList.add("disabled");
+    btn.innerText = "Nicht verfügbar";
+    div.appendChild(btn);
+  }
+
+  container.appendChild(div);
+});
+
 </script>
 
 </body>
