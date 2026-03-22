@@ -13,13 +13,13 @@ body {
   color: white;
 }
 
-/* 🌟 HEADER (modern sticky feel) */
+/* HEADER */
 header {
   text-align: center;
   padding: 25px 15px;
   position: sticky;
   top: 0;
-  background: rgba(11,18,32,0.8);
+  background: rgba(11,18,32,0.85);
   backdrop-filter: blur(10px);
   z-index: 10;
 }
@@ -33,7 +33,7 @@ header p {
   color: #94a3b8;
 }
 
-/* 📱 MOBILE-FIRST CONTAINER */
+/* CONTAINER */
 .container {
   max-width: 700px;
   margin: auto;
@@ -42,7 +42,7 @@ header p {
   gap: 16px;
 }
 
-/* 🧩 CARD (modern app look) */
+/* CARD */
 .card {
   background: #111827;
   border-radius: 18px;
@@ -55,26 +55,6 @@ header p {
 
 .card:hover {
   transform: translateY(-4px);
-}
-
-/* ⭐ FEATURED EVENT */
-.featured {
-  border: 2px solid #fbbf24;
-  background: linear-gradient(135deg, #111827, #1f2937);
-  box-shadow: 0 0 20px rgba(251,191,36,0.25);
-}
-
-.featured::before {
-  content: "🔥 HIGHLIGHT";
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  background: #fbbf24;
-  color: black;
-  font-size: 11px;
-  padding: 4px 8px;
-  border-radius: 999px;
-  font-weight: bold;
 }
 
 /* TITEL */
@@ -111,22 +91,58 @@ p {
 .gray { background: #1f2937; color: #9ca3af; }
 .purple { background: #2e1065; color: #c084fc; }
 
-/* STATUS BORDERS */
+/* STATUS */
 .free { border-color: #22c55e; }
 .full { border-color: #ef4444; }
 .private { border-color: #9ca3af; opacity: 0.75; }
+.postponed { border-color: #a855f7; }
+
+/* ❌ CANCELLED CARD */
 .cancelled {
   border-color: #ff2d2d;
   background: rgba(255,0,0,0.08);
-  opacity: 0.6;
+  opacity: 0.65;
   filter: grayscale(1);
+  box-shadow: 0 0 18px rgba(255,0,0,0.25);
 }
-.postponed { border-color: #a855f7; }
 
+/* durchgestrichener Titel */
 .cancelled .title {
   text-decoration: line-through;
   text-decoration-color: #ff2d2d;
   text-decoration-thickness: 2px;
+}
+
+/* 🔴 ANIMIERTES ABGESAGT BADGE */
+.cancelled-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #ff2d2d;
+  color: white;
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-weight: bold;
+  box-shadow: 0 0 12px rgba(255,0,0,0.5);
+
+  animation: pulse 1.2s infinite;
+}
+
+/* Animation */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 8px rgba(255,0,0,0.4);
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 0 18px rgba(255,0,0,0.8);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 8px rgba(255,0,0,0.4);
+  }
 }
 </style>
 </head>
@@ -135,7 +151,7 @@ p {
 
 <header>
   <h1>📅 Meine Ausflüge</h1>
-  <p>Modernes Event-Board</p>
+  <p>Event-Board</p>
 </header>
 
 <div class="container" id="app"></div>
@@ -148,28 +164,19 @@ const events = [
     date: "28.03.2026",
     status: "free",
     featured: true,
-    details: "Fotos & Videos im Murgtal. Start 9–10 Uhr."
+    details: "Fotos & Videos im Murgtal"
   },
   {
     title: "🚶 Teckbahn Tour",
     date: "29.03.2026",
     status: "private",
-    featured: false,
     details: "Nur für bestimmte Personen"
   },
   {
     title: "🏙️ Stuttgart Trip",
     date: "05.04.2026",
     status: "cancelled",
-    featured: false,
     details: "Fällt wegen Wetter aus"
-  },
-  {
-    title: "🚆 Schwarzwald",
-    date: "12.04.2026",
-    status: "postponed",
-    featured: false,
-    details: "Wird verschoben"
   }
 ];
 
@@ -179,7 +186,6 @@ events.forEach(e => {
 
   const card = document.createElement("div");
 
-  // FEATURED + STATUS CLASSES
   let classes = ["card", e.status];
   if (e.featured) classes.push("featured");
 
@@ -192,26 +198,32 @@ events.forEach(e => {
     badgeText = "🟢 Teilnahme möglich";
     badgeClass = "green";
   }
+
   if (e.status === "full") {
     badgeText = "🔴 Ausgebucht";
     badgeClass = "red";
   }
+
   if (e.status === "private") {
     badgeText = "🔒 Privat";
     badgeClass = "gray";
   }
-  if (e.status === "cancelled") {
-    badgeText = "❌ Fällt aus";
-    badgeClass = "red";
-  }
+
   if (e.status === "postponed") {
     badgeText = "🟣 Verschoben";
     badgeClass = "purple";
   }
 
+  if (e.status === "cancelled") {
+    badgeText = "❌ Fällt aus";
+    badgeClass = "red";
+  }
+
   card.innerHTML = `
     <div class="title">${e.title}</div>
     <div>📅 ${e.date}</div>
+
+    ${e.status === "cancelled" ? `<div class="cancelled-badge">ABGESAGT</div>` : ""}
 
     <span class="badge ${badgeClass}">
       ${badgeText}
