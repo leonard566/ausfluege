@@ -9,7 +9,7 @@
 body {
   margin: 0;
   font-family: system-ui, Arial;
-  background: #0f172a;
+  background: #0b1220;
   color: white;
 }
 
@@ -21,10 +21,14 @@ header {
 
 header h1 {
   margin: 0;
-  font-size: 28px;
+  font-size: 30px;
 }
 
-/* Layout */
+header p {
+  color: #94a3b8;
+}
+
+/* Grid */
 .container {
   max-width: 900px;
   margin: auto;
@@ -43,7 +47,7 @@ header h1 {
 }
 
 .card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
 }
 
 /* Status Farben */
@@ -69,10 +73,10 @@ header h1 {
 /* Badge */
 .badge {
   display: inline-block;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: 999px;
   font-size: 13px;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .green { background: #052e16; color: #22c55e; }
@@ -81,7 +85,7 @@ header h1 {
 
 /* Details */
 details {
-  margin-top: 10px;
+  margin-top: 12px;
   cursor: pointer;
 }
 
@@ -99,36 +103,25 @@ p {
 
 <header>
   <h1>📅 Meine Ausflüge</h1>
-  <p>Einfach ansehen, ob Plätze frei sind</p>
+  <p>Einfach ansehen, ob du mit kannst</p>
 </header>
 
 <div class="container" id="app"></div>
 
 <script>
+
 const events = [
   {
-    title: "🌲 Wanderung Schwarzwald",
-    date: "12.04.2026",
-    max: 5,
-    participants: 2,
-    private: false,
-    details: "Treffpunkt: Bahnhof • Dauer: 4h"
+    title: "🎬📸 Kinoabend",
+    date: "28.03.2026",
+    status: "free",
+    details: "Wir laufen durch das Murgtal und fotografieren bzw. filmen die Züge. Begleitet wird die Murgtalreise von guter Musik." <br>"Start gegen 9 oder 10 Uhr am Hbf."</br>
   },
   {
-    title: "🎬 Kinoabend",
-    date: "20.04.2026",
-    max: 3,
-    participants: 3,
-    private: false,
-    details: "Film + Snacks 🍿"
-  },
-  {
-    title: "🔥 Grillabend",
-    date: "25.04.2026",
-    max: 10,
-    participants: 0,
-    private: true,
-    details: "Nur für Freunde"
+    title: "🚶‍♂️ Teckbahn/Weil der Stadt",
+    date: "29.03.2026",
+    status: "private",
+    details: "Nur für bestimmte Personen"
   }
 ];
 
@@ -137,36 +130,32 @@ const app = document.getElementById("app");
 events.forEach(e => {
 
   const card = document.createElement("div");
-  card.classList.add("card");
+  card.classList.add("card", e.status);
 
-  let statusText = "";
+  let badgeText = "";
   let badgeClass = "";
-  let stateClass = "";
 
-  if (e.private) {
-    statusText = "🔒 Privat";
-    badgeClass = "gray";
-    stateClass = "private";
-  }
-  else if (e.participants >= e.max) {
-    statusText = "🚫 Ausgebucht";
-    badgeClass = "red";
-    stateClass = "full";
-  }
-  else {
-    statusText = `🟢 ${e.participants}/${e.max} frei`;
+  if (e.status === "free") {
+    badgeText = "🟢 Teilnahme möglich";
     badgeClass = "green";
-    stateClass = "free";
   }
 
-  card.classList.add(stateClass);
+  if (e.status === "full") {
+    badgeText = "🔴 Ausgebucht";
+    badgeClass = "red";
+  }
+
+  if (e.status === "private") {
+    badgeText = "🔒 Privat";
+    badgeClass = "gray";
+  }
 
   card.innerHTML = `
     <div class="title">${e.title}</div>
     <div>📅 ${e.date}</div>
 
     <span class="badge ${badgeClass}">
-      ${statusText}
+      ${badgeText}
     </span>
 
     <details>
@@ -177,6 +166,7 @@ events.forEach(e => {
 
   app.appendChild(card);
 });
+
 </script>
 
 </body>
