@@ -13,37 +13,43 @@ body {
   color: white;
 }
 
-/* Header */
+/* 🌟 HEADER (modern sticky feel) */
 header {
   text-align: center;
-  padding: 30px 15px;
+  padding: 25px 15px;
+  position: sticky;
+  top: 0;
+  background: rgba(11,18,32,0.8);
+  backdrop-filter: blur(10px);
+  z-index: 10;
 }
 
 header h1 {
   margin: 0;
-  font-size: 30px;
+  font-size: 28px;
 }
 
 header p {
   color: #94a3b8;
 }
 
-/* Container */
+/* 📱 MOBILE-FIRST CONTAINER */
 .container {
-  max-width: 900px;
+  max-width: 700px;
   margin: auto;
-  padding: 10px;
+  padding: 15px;
   display: grid;
-  gap: 15px;
+  gap: 16px;
 }
 
-/* Card */
+/* 🧩 CARD (modern app look) */
 .card {
   background: #111827;
-  border-radius: 16px;
-  padding: 18px;
+  border-radius: 18px;
+  padding: 20px;
   border: 2px solid transparent;
-  transition: 0.2s;
+  transition: 0.25s ease;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
   position: relative;
 }
 
@@ -51,27 +57,47 @@ header p {
   transform: translateY(-4px);
 }
 
+/* ⭐ FEATURED EVENT */
+.featured {
+  border: 2px solid #fbbf24;
+  background: linear-gradient(135deg, #111827, #1f2937);
+  box-shadow: 0 0 20px rgba(251,191,36,0.25);
+}
+
+.featured::before {
+  content: "🔥 HIGHLIGHT";
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: #fbbf24;
+  color: black;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: bold;
+}
+
 /* TITEL */
 .title {
   font-size: 18px;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 }
 
 /* DETAILS */
 details {
   margin-top: 12px;
-  cursor: pointer;
 }
 
 summary {
   color: #cbd5e1;
+  cursor: pointer;
 }
 
 p {
   color: #cbd5e1;
 }
 
-/* BADGE */
+/* BADGES */
 .badge {
   display: inline-block;
   padding: 6px 12px;
@@ -80,62 +106,27 @@ p {
   margin-top: 10px;
 }
 
-/* STATUS FARBEN */
 .green { background: #052e16; color: #22c55e; }
 .red { background: #450a0a; color: #ff4d4d; }
 .gray { background: #1f2937; color: #9ca3af; }
 .purple { background: #2e1065; color: #c084fc; }
-.yellow { background: #422006; color: #fbbf24; }
 
-/* 🟢 FREE */
-.free {
-  border-color: #22c55e;
-}
-
-/* 🔴 FULL */
-.full {
-  border-color: #ef4444;
-}
-
-/* 🔒 PRIVATE */
-.private {
-  border-color: #9ca3af;
-  opacity: 0.75;
-}
-
-/* ❌ CANCELLED (FÄLLT AUS) */
+/* STATUS BORDERS */
+.free { border-color: #22c55e; }
+.full { border-color: #ef4444; }
+.private { border-color: #9ca3af; opacity: 0.75; }
 .cancelled {
   border-color: #ff2d2d;
-  background: rgba(255, 0, 0, 0.08);
+  background: rgba(255,0,0,0.08);
   opacity: 0.6;
   filter: grayscale(1);
-  box-shadow: 0 0 15px rgba(255, 0, 0, 0.25);
 }
+.postponed { border-color: #a855f7; }
 
-/* durchgestrichener Titel bei abgesagt */
 .cancelled .title {
   text-decoration: line-through;
-  text-decoration-thickness: 2px;
   text-decoration-color: #ff2d2d;
-}
-
-/* 🟣 POSTPONED */
-.postponed {
-  border-color: #a855f7;
-}
-
-/* Label für abgesagt */
-.cancelled::before {
-  content: "❌ ABGESAGT";
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  background: #ff2d2d;
-  color: white;
-  font-size: 11px;
-  padding: 4px 8px;
-  border-radius: 999px;
-  font-weight: bold;
+  text-decoration-thickness: 2px;
 }
 </style>
 </head>
@@ -144,7 +135,7 @@ p {
 
 <header>
   <h1>📅 Meine Ausflüge</h1>
-  <p>Pro Event Übersicht</p>
+  <p>Modernes Event-Board</p>
 </header>
 
 <div class="container" id="app"></div>
@@ -153,34 +144,32 @@ p {
 
 const events = [
   {
-    title: "🎬📸 Murgtalbahn Fotos/Videos",
+    title: "🎬 Murgtalbahn Fotos",
     date: "28.03.2026",
     status: "free",
-    details: "Wir laufen durch das Murgtal und fotografieren die Züge.\nStart ca. 9–10 Uhr am Hbf."
+    featured: true,
+    details: "Fotos & Videos im Murgtal. Start 9–10 Uhr."
   },
   {
-    title: "🚶‍♂️ Teckbahn Tour",
+    title: "🚶 Teckbahn Tour",
     date: "29.03.2026",
     status: "private",
+    featured: false,
     details: "Nur für bestimmte Personen"
   },
   {
     title: "🏙️ Stuttgart Trip",
     date: "05.04.2026",
     status: "cancelled",
-    details: "Fällt wegen Wetter leider aus"
+    featured: false,
+    details: "Fällt wegen Wetter aus"
   },
   {
-    title: "🚆 Schwarzwald Tour",
+    title: "🚆 Schwarzwald",
     date: "12.04.2026",
     status: "postponed",
-    details: "Wird verschoben auf unbestimmtes Datum"
-  },
-  {
-    title: "🎉 Sommer Event",
-    date: "20.06.2026",
-    status: "full",
-    details: "Leider schon voll"
+    featured: false,
+    details: "Wird verschoben"
   }
 ];
 
@@ -189,7 +178,12 @@ const app = document.getElementById("app");
 events.forEach(e => {
 
   const card = document.createElement("div");
-  card.classList.add("card", e.status);
+
+  // FEATURED + STATUS CLASSES
+  let classes = ["card", e.status];
+  if (e.featured) classes.push("featured");
+
+  card.className = classes.join(" ");
 
   let badgeText = "";
   let badgeClass = "";
@@ -198,22 +192,18 @@ events.forEach(e => {
     badgeText = "🟢 Teilnahme möglich";
     badgeClass = "green";
   }
-
   if (e.status === "full") {
     badgeText = "🔴 Ausgebucht";
     badgeClass = "red";
   }
-
   if (e.status === "private") {
     badgeText = "🔒 Privat";
     badgeClass = "gray";
   }
-
   if (e.status === "cancelled") {
     badgeText = "❌ Fällt aus";
     badgeClass = "red";
   }
-
   if (e.status === "postponed") {
     badgeText = "🟣 Verschoben";
     badgeClass = "purple";
