@@ -151,23 +151,23 @@ p {
 
 const events = [
   {
-    title: "🎬 Murgtalbahn Fotos",
+    title: "🎬📸 Murgtalbahn Fotos/Videos",
     date: "28.03.2026",
     status: "free",
-    details: "Fotos & Videos im Murgtal"
+    details: "Wir laufen durch das Murgtal und fotografieren die Züge.\nStart ca. 9–10 Uhr am Hbf."
   },
   {
-    title: "🏙️ Stuttgart Trip",
+    title: "🚶‍♂️ Teckbahn Tour",
+    date: "29.03.2026",
+    status: "private",
+    details: "Nur für bestimmte Personen"
+  },
+  {
+    title: "🏙️ Stuttgart",
     date: "05.04.2026",
-    status: "cancelled",
-    details: "Fällt wegen Wetter aus"
+    status: "private",
+    details: "Nur für bestimmte Personen"
   },
-  {
-    title: "🚆 Schwarzwald Tour",
-    date: "12.04.2026",
-    status: "postponed",
-    details: "Wird verschoben"
-  }
 ];
 
 const app = document.getElementById("app");
@@ -185,14 +185,24 @@ events.forEach(e => {
     badgeClass = "green";
   }
 
-  if (e.status === "cancelled") {
-    badgeText = "❌ Fällt aus";
+  if (e.status === "full") {
+    badgeText = "🔴 Ausgebucht";
     badgeClass = "red";
+  }
+
+  if (e.status === "private") {
+    badgeText = "🔒 Privat";
+    badgeClass = "gray";
   }
 
   if (e.status === "postponed") {
     badgeText = "🟣 Verschoben";
     badgeClass = "purple";
+  }
+
+  if (e.status === "cancelled") {
+    badgeText = "❌ Fällt aus";
+    badgeClass = "red";
   }
 
   card.innerHTML = `
