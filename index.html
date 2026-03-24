@@ -197,9 +197,57 @@ p {
   border-color: #ff2d2d;
   background: rgba(255,0,0,0.12);
 }
+
+  /* 🔲 POPUP OVERLAY */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+/* 📦 POPUP BOX */
+.modal-content {
+  background: #111827;
+  border-radius: 20px;
+  padding: 25px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  animation: popup 0.3s ease;
+}
+
+/* ✖ CLOSE BUTTON */
+.close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 20px;
+  cursor: pointer;
+  color: #94a3b8;
+}
+
+/* Animation */
+@keyframes popup {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
 </style>
 </head>
 
+  <div class="modal" id="modal">
+  <div class="modal-content" id="modalContent">
+    <span class="close" onclick="closeModal()">✖</span>
+    <div id="modalBody"></div>
+  </div>
+</div>
+  
 <body>
 
 <header>
@@ -310,6 +358,23 @@ events.forEach(e => {
 
   app.appendChild(card);
 });
+
+  function openModal(event) {
+  const modal = document.getElementById("modal");
+  const body = document.getElementById("modalBody");
+
+  body.innerHTML = `
+    <h2>${event.title}</h2>
+    <p>📅 ${event.date}</p>
+    <p>${event.details}</p>
+  `;
+
+  modal.style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("modal").style.display = "none";
+}
 
 </script>
 
