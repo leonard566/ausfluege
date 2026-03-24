@@ -152,7 +152,8 @@ p {
 const events = [
   {
     title: "🎬📸 Murgtalbahn Fotos/Videos",
-    date: "~~28.03.2026~~ → ??.??.2026",
+    oldDate: "28.03.2026",
+    date: "??.??.2026",
     status: ["postponed"],
     details: "Wir laufen durch das Murgtal und fotografieren die Züge."
   },
@@ -220,7 +221,7 @@ events.forEach(e => {
 
   card.innerHTML = `
     <div class="title">${e.title}</div>
-    <div>📅 ${e.date}</div>
+    <div>📅 ${e.oldDate ? `<s>${e.oldDate}</s> → ${e.date}` : e.date}</div>
 
     ${e.status.includes("cancelled") ? `<div class="cancelled-badge">ABGESAGT</div>` : ""}
 
