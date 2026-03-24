@@ -136,38 +136,66 @@ p {
   50% { opacity: 0.4; }
 }
 
-  /* 📅 Fancy Datum */
+/* 🔥 ULTRA DATUM UI */
 .date-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 4px;
+  margin-top: 6px;
   font-size: 14px;
 }
 
-/* altes Datum */
+/* Timeline Container */
+.date-change {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(139,92,246,0.08);
+  border: 1px solid rgba(139,92,246,0.25);
+}
+
+/* Altes Datum */
 .old-date {
   color: #64748b;
   text-decoration: line-through;
 }
 
-/* Pfeil */
+/* Pfeil animiert */
 .arrow {
   color: #a78bfa;
   font-weight: bold;
-  animation: slide 1.5s infinite alternate;
+  animation: moveArrow 1.5s infinite ease-in-out;
 }
 
-/* neues Datum */
+/* Neues Datum */
 .new-date {
   color: #e2e8f0;
   font-weight: 600;
 }
 
-/* kleine Animation */
-@keyframes slide {
-  0% { transform: translateX(0px); }
-  100% { transform: translateX(4px); }
+/* Glow Effekt */
+.date-change:hover {
+  box-shadow: 0 0 12px rgba(139,92,246,0.4);
+}
+
+/* Animation */
+@keyframes moveArrow {
+  0% { transform: translateX(0); opacity: 0.7; }
+  50% { transform: translateX(5px); opacity: 1; }
+  100% { transform: translateX(0); opacity: 0.7; }
+}
+
+/* Status Farben fürs Datum */
+.postponed .date-change {
+  border-color: #a855f7;
+  background: rgba(168,85,247,0.12);
+}
+
+.cancelled .date-change {
+  border-color: #ff2d2d;
+  background: rgba(255,0,0,0.12);
 }
 </style>
 </head>
@@ -259,9 +287,11 @@ events.forEach(e => {
   📅
   ${
     e.oldDate
-      ? `<span class="old-date">${e.oldDate}</span>
-         <span class="arrow">→</span>
-         <span class="new-date">${e.date}</span>`
+      ? `<div class="date-change">
+           <span class="old-date">${e.oldDate}</span>
+           <span class="arrow">→</span>
+           <span class="new-date">${e.date}</span>
+         </div>`
       : `<span class="new-date">${e.date}</span>`
   }
 </div>
