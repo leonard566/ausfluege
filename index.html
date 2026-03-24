@@ -135,6 +135,40 @@ p {
 @keyframes softBlink {
   50% { opacity: 0.4; }
 }
+
+  /* 📅 Fancy Datum */
+.date-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+/* altes Datum */
+.old-date {
+  color: #64748b;
+  text-decoration: line-through;
+}
+
+/* Pfeil */
+.arrow {
+  color: #a78bfa;
+  font-weight: bold;
+  animation: slide 1.5s infinite alternate;
+}
+
+/* neues Datum */
+.new-date {
+  color: #e2e8f0;
+  font-weight: 600;
+}
+
+/* kleine Animation */
+@keyframes slide {
+  0% { transform: translateX(0px); }
+  100% { transform: translateX(4px); }
+}
 </style>
 </head>
 
@@ -221,7 +255,16 @@ events.forEach(e => {
 
   card.innerHTML = `
     <div class="title">${e.title}</div>
-    <div>📅 ${e.oldDate ? `<s>${e.oldDate}</s> → ${e.date}` : e.date}</div>
+    <div class="date-row">
+  📅
+  ${
+    e.oldDate
+      ? `<span class="old-date">${e.oldDate}</span>
+         <span class="arrow">→</span>
+         <span class="new-date">${e.date}</span>`
+      : `<span class="new-date">${e.date}</span>`
+  }
+</div>
 
     ${e.status.includes("cancelled") ? `<div class="cancelled-badge">ABGESAGT</div>` : ""}
 
